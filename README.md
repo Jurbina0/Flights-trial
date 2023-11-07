@@ -26,3 +26,10 @@ Luego he debido de aceptar las cookies.
 + node.js
 + puppeteer
 + chromium (requiere chrome)
+
+Para guardar desde javascript un archivo csv:
++ paquete fs o fse-extra (que incluye fs)
+
+## Grabación
++ Prueba con obs
++ Guardado en csv de horas en [wikipedia](https://es.wikipedia.org/wiki/Hora)
