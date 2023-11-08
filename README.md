@@ -35,6 +35,59 @@ Para guardar desde javascript un archivo csv:
 + Guardado en csv de horas en [wikipedia](https://es.wikipedia.org/wiki/Hora)
 
 8.11.23
+## Guardar en csv 3 columnas de números
+
+De la web de wikipedia antes descrita se han hecho 3 columnas, cada fila distinguida por saltos de línea '\n' y elementos de la columna con ','
+
+```
+const puppeteer = require('puppeteer');
+const fse = require('fs-extra');
+
+(async () => {
+    const browser = await puppeteer.launch({ headless: false });  // Modo no headless para ver el navegador
+    const page = await browser.newPage();
+    await page.goto(process.argv[2], { waitUntil: 'networkidle0' });
+    // de aquí habrás obtenido la página web a scrapear
+
+    // Extraer números de ul, li
+    const numbers = await page.$$eval('ul > li', listItems => {
+        return listItems.map(li => {
+            const text = li.innerText;
+            const matches = text.match(/\b\d+(?:\s\d+)*\s+horas\b/g);
+            return matches ? matches.map(match => {
+                const numberString = match.replace(/\s+horas\b/, '').replace(/\s/g, '');
+                return parseInt(numberString, 10);
+            }) : []; // de aquí saldrán integers
+        }).flat();
+    });
+    await browser.close();
+    // hasta aquí lo que es extraer info de la web
+    // para dividir en 3 columnas del csv, se van completando por filas
+    const rows = [];
+    for (let i = 0; i < numbers.length; i += 3) {
+        // Crea un arreglo para la fila actual.
+        const row = [
+            numbers[i], // Primera columna
+            numbers[i + 1] || '', // Segunda columna (o cadena vacía si no existe)
+            numbers[i + 2] || '', // Tercera columna (o cadena vacía si no existe)
+        ];
+        // Agrega la fila al arreglo de filas.
+        rows.push(row.join(',')); // push es como append del python pero devuelve la longitud
+    }
+    // si quisiéramos cabecera vendría aquí
+    const header = 'Fecha '
+    const csvContent = rows.join('\n') // separación entre filas por saltos de línea
+    // Guardar en un archivo CSV
+    const csvPath = process.argv[3];
+    // outputfile y fs-extra crean directorio si no existe
+    await fse.outputFile(csvPath, csvContent);
+})();
+```
+
+### Resultado
+![Captura desde 2023-11-09 00-21-50](https://github.com/Jurbina0/Flights-trial/assets/147608303/8db88e6c-b2c5-4d3b-aa4b-b12aa8192e34)
+
+
 ##  Javascript code
 + Con "inspeccionar" en google chrome, seleccionar "Elements" y pasando el cursor encima del elemento de interés podemos encontrar las líneas del html concretas de lo que seleccionamos.
 + Hemos visto:
