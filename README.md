@@ -96,9 +96,10 @@ const fse = require('fs-extra');
         + Es un API; habitualmente se conecta con JS, se puede Python (p.e. [xml.dom.minidom](https://docs.python.org/3/library/xml.dom.minidom.html)
         + DOM tree: [Document](https://developer.mozilla.org/en-US/docs/Web/API/Document)
         + Window: [Window](https://developer.mozilla.org/en-US/docs/Web/API/Window) Ventana que contiene el DOM tree
-    + Definir las acciones del scraper mediante selectores (nodos?) [XPath](https://www.scrapingbee.com/blog/practical-xpath-for-web-scraping/)
+    + Encontrar los elementos/nodos de interés para las acciones del scraper mediante selectores  [XPath](https://www.scrapingbee.com/blog/practical-xpath-for-web-scraping/)
         + CSS selector
         + Xpath selector
+        + [Comparativa](https://www.zenrows.com/blog/xpath-web-scraping#css-vs-xpath) muy buena
     + Elegir los elementos usando ruta XPath (usando 'id'), absoluta XPath (poco robusta, alterando la web deja de funcionar), ruta JS
 
 ### Observaciones II
