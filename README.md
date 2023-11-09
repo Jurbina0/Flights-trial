@@ -159,4 +159,61 @@ const dateSelectorButtonSelector = '#app-root > div:nth-child(1) > div > div > m
     await page.click(dateButtonSelector);
 ```
 
+## 9/11 Problema
++ Se ha intentado encontrar las clases y los ids concretos de los botones del selector de fecha. No se ha resuelto.
+
+```
+const puppeteer = require('puppeteer');
+const fse = require('fs-extra');
+
+(async () => {
+
+    const url = process.argv[2];
+    const imagePath = process.argv[3];
+
+    const browser = await puppeteer.launch({ headless: false });
+    const page = await browser.newPage();
+    await page.goto(url, { waitUntil: 'networkidle0' });
+
+    // Aceptamos las cookies
+    const acceptCookiesButton = await page.waitForSelector('#acceptCookieButton', { visible: true });
+    if (acceptCookiesButton) {
+        await acceptCookiesButton.click();
+    }
+
+    // Asumiendo que el botón para abrir el calendario está visible y puede ser clickeado
+    const openCalendarButtonSelector = "#app-root > div:nth-child(1) > div > div > main > div.Homepage_searchControlsContainer__ZWI2N > div > div.SearchControls_container__MDdjN > div > div.SearchControls_dates__MmM5Y.SearchControlButton_container__ZWY2N > button";
+    await page.waitForSelector(openCalendarButtonSelector, { visible: true });
+    await page.click(openCalendarButtonSelector);
+
+    // Asumiendo que el botón para elegir la fecha de ida se puede clickear después de abrir el calendario
+    const chooseStartDateButtonSelector = "#outboundDatePickerInput > div > button";
+    await page.waitForSelector(chooseStartDateButtonSelector, { visible: true });
+    await page.click(chooseStartDateButtonSelector);
+
+    // Selección del mes actual en el calendario desplegable, esto podría requerir más lógica si el calendario no abre por defecto en el mes actual
+    const currentMonthSelector = "#CalendarDateInputStart-calendar__bpk_calendar_nav_select > option:nth-child(1)";
+    await page.waitForSelector(currentMonthSelector, { visible: true });
+    await page.click(currentMonthSelector);
+
+    // Esperar a que los días del calendario estén disponibles para ser clickeados
+    const calendarDaysContainerSelector = "#CalendarDateInputStart-popover > div > div > div.BpkCalendarGrid_bpk-calendar-grid__OWRiN";
+    await page.waitForSelector(calendarDaysContainerSelector, { visible: true });
+
+    // Seleccionar un día específico, en este caso, el día 26
+    const daySelector = "#CalendarDateInputStart-popover > div > div > div.BpkCalendarGrid_bpk-calendar-grid__OWRiN > div > div:nth-child(4) > div.BpkCalendarGrid_bpk-calendar-grid__date__YzQ1O.bpk-calendar-grid__date--single > button";
+    await page.waitForSelector(daySelector, { visible: true });
+    await page.click(daySelector);
+
+    document.querySelector("#app-root > div:nth-child(1) > div > main > div.DatePickerMobile_form__ZGRjY > div.Calendar_grid__YWZkZ > div > div > div > div > div > div:nth-child(1) > div > div > div > div:nth-child(4) > div:nth-child(6) > div > div > button")
+
+    // Espera 5 segundos usando setTimeout envuelto en una promesa
+    await new Promise(resolve => setTimeout(resolve, 5000));
+
+    // Hacer la captura de pantalla y guardarla en la ruta especificada
+    await page.screenshot({ path: imagePath });
+    await browser.close();
+})();
+
+```
 
